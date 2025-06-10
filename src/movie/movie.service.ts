@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateMovieDto } from './dto/create-movie.dto';
+import { UpdateMovieDto } from './dto/update-movie.dto';
 export interface Movie {
   id: number;
   title: string;
+  genre: string;
 }
 @Injectable()
 export class MovieService {
@@ -9,10 +12,12 @@ export class MovieService {
     {
       id: 1,
       title: 'Avengers',
+      genre: 'Action',
     },
     {
       id: 2,
       title: 'The Dark Knight',
+      genre: 'Action',
     },
   ];
   private idCounter = 3;
@@ -32,22 +37,25 @@ export class MovieService {
     return movie;
   }
 
-  createMovie(title: string): Movie {
-    console.log(title);
+  createMovie(createMovieDto: CreateMovieDto): Movie {
     const movie: Movie = {
       id: this.idCounter++,
-      title,
+      title: createMovieDto.title,
+      genre: createMovieDto.genre,
     };
     this.movies.push(movie);
     return movie;
   }
 
-  updateMovie(id: number, title: string): Movie {
+  updateMovie(id: number, updateMovieDto: UpdateMovieDto): Movie {
     const movie = this.movies.find((movie) => movie.id === id);
     if (!movie) {
       throw new NotFoundException('존재하지 않는 영화의 id입니다.');
     }
-    Object.assign(movie, { title });
+    Object.assign(movie, {
+      title: updateMovieDto.title,
+      genre: updateMovieDto.genre,
+    });
     return movie;
   }
 
